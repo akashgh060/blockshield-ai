@@ -1,61 +1,179 @@
 export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
 
-export type RiskLevel = 'LOW' | 'MODERATE' | 'HIGH' | 'VERY HIGH';
+export type RiskLevel =
+  | 'LOW'
+  | 'MODERATE'
+  | 'HIGH'
+  | 'VERY HIGH';
+
+export type PrivacyFindingCategory =
+  | 'address_reuse'
+  | 'linkability'
+  | 'transaction_structure'
+  | 'public_exposure'
+  | 'historical_patterns';
 
 export interface PrivacyFinding {
   id: string;
-  category: 'address_reuse' | 'linkability' | 'transaction_structure' | 'public_exposure' | 'historical_patterns';
+
+  category: PrivacyFindingCategory;
+
   title: string;
+
   severity: SeverityLevel;
-  confidence: number; // 0.0 to 1.0
+
+  /**
+   * Confidence in the heuristic finding.
+   * Range: 0.0 - 1.0
+   */
+  confidence: number;
+
   description: string;
+
   reason: string;
+
   limitations: string;
+
   educationalNote?: string;
 }
 
 export interface RiskFactorScore {
   name: string;
-  score: number; // 0 to 100
-  weight: number; // 0 to 1
+
+  /**
+   * Individual factor score.
+   * Range: 0 - 100
+   */
+  score: number;
+
+  /**
+   * Weight used in the overall privacy score.
+   * Range: 0 - 1
+   */
+  weight: number;
+
   impact: 'low' | 'medium' | 'high';
+
   summary: string;
 }
 
 export interface PrivacyMetrics {
   inputCount: number;
+
   outputCount: number;
+
   totalInputValue: number;
+
   totalOutputValue: number;
+
   feePaid: number;
+
   distinctInputAddresses: number;
+
   distinctOutputAddresses: number;
+
   addressReuseCount: number;
+
   hasRoundNumberOutput: boolean;
+
   hasChangeOutputHeuristic: boolean;
+
   isEqualOutputCoinjoin: boolean;
-  scriptTypeHomogeneity: 'uniform' | 'mixed' | 'legacy_mixed';
-  consolidationRatio: number; // inputs / outputs
+
+  scriptTypeHomogeneity:
+    | 'uniform'
+    | 'mixed'
+    | 'legacy_mixed';
+
+  /**
+   * Number of inputs divided by number of outputs.
+   */
+  consolidationRatio: number;
+
   peeledLogLength?: number;
 }
 
+export interface PrivacyRiskBreakdown {
+  addressReuse: RiskFactorScore;
+
+  linkability: RiskFactorScore;
+
+  transactionStructure: RiskFactorScore;
+
+  publicExposure: RiskFactorScore;
+
+  historicalPatterns: RiskFactorScore;
+}
+
 export interface PrivacyAnalysis {
-  targetId: string; // TXID or Address
+  /**
+   * Transaction ID or Bitcoin address being analyzed.
+   */
+  targetId: string;
+
+  /**
+   * Type of analysis.
+   */
   targetType: 'transaction' | 'address';
+
+  /**
+   * Analysis timestamp.
+   */
   timestamp: number;
-  overallRiskScore: number; // 0 to 100
+
+  /**
+   * Overall privacy risk score.
+   *
+   * 0 = lower observed privacy risk
+   * 100 = higher observed privacy risk
+   */
+  overallRiskScore: number;
+
+  /**
+   * Backward-compatible alias for UI components
+   * that still reference analysis.score.
+   *
+   * Always contains the same value as overallRiskScore.
+   */
+  score: number;
+
+  /**
+   * Human-readable risk classification.
+   */
   riskLevel: RiskLevel;
+
+  /**
+   * Short explanation of the scoring result.
+   */
   heuristicLabel: string;
+
+  /**
+   * Privacy findings discovered during analysis.
+   */
   findings: PrivacyFinding[];
+
+  /**
+   * Observable transaction/address metrics.
+   */
   metrics: PrivacyMetrics;
-  riskBreakdown: {
-    addressReuse: RiskFactorScore;
-    linkability: RiskFactorScore;
-    transactionStructure: RiskFactorScore;
-    publicExposure: RiskFactorScore;
-    historicalPatterns: RiskFactorScore;
-  };
+
+  /**
+   * Individual weighted risk factors.
+   */
+  riskBreakdown: PrivacyRiskBreakdown;
+
+  /**
+   * Important limitations of blockchain-only analysis.
+   */
   limitations: string[];
+
+  /**
+   * Defensive privacy considerations.
+   */
   defensiveRecommendations: string[];
+
+  /**
+   * Safety and interpretation disclaimer.
+   */
   disclaimer: string;
 }

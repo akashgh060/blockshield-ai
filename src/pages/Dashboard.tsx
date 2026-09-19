@@ -8,17 +8,24 @@ import {
   Sparkles,
   AlertTriangle,
   Layers,
-  CheckCircle2,
   Lock,
   Cpu,
   Terminal,
+  Network,
+  Eye,
+  Zap,
+  ExternalLink,
 } from 'lucide-react';
+
 import { DEMO_SCENARIOS, DemoScenario } from '../services/bitcoin/demoData';
 import { NavTab } from '../components/layout/Navbar';
 
 interface DashboardProps {
   setActiveTab: (tab: NavTab) => void;
-  onSelectScenario: (scenario: DemoScenario, targetTab: 'transaction' | 'copilot') => void;
+  onSelectScenario: (
+    scenario: DemoScenario,
+    targetTab: 'transaction' | 'copilot'
+  ) => void;
   isDemoMode: boolean;
   setIsDemoMode: (val: boolean) => void;
   onOpenJudgeDemo: () => void;
@@ -34,306 +41,530 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const scenarios = Object.values(DEMO_SCENARIOS);
 
   return (
-    <div id="dashboard-page" className="space-y-10 py-6 max-w-7xl mx-auto">
-      {/* Demo Mode Notice Banner if active */}
+    <div
+      id="dashboard-page"
+      className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9 space-y-7"
+    >
+      {/* =====================================================
+          DEMO MODE BANNER
+          ===================================================== */}
       {isDemoMode && (
-        <div
+        <section
           id="demo-mode-dashboard-banner"
-          className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-900 border border-amber-500/30 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4"
+          className="relative overflow-hidden rounded-xl border border-amber-500/20 bg-[#0d1218]"
         >
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/20 text-amber-300">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono font-bold text-amber-300 text-xs uppercase tracking-wider">
-                  Deterministic Demo Mode Active
-                </span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Offline Ready
-                </span>
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/[0.07] via-transparent to-transparent pointer-events-none" />
+
+          <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-4 sm:p-5">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 shrink-0 rounded-lg border border-amber-400/20 bg-amber-400/10 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-amber-300" />
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Loaded with 3 curated Bitcoin privacy scenarios. You can inspect transactions or run the AI agent without external API keys.
-              </p>
+
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[11px] font-bold font-mono uppercase tracking-[0.12em] text-amber-300">
+                    Deterministic Demo Mode
+                  </span>
+
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold font-mono uppercase tracking-wider text-amber-300 bg-amber-400/10 border border-amber-400/20">
+                    Offline Ready
+                  </span>
+                </div>
+
+                <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                  Three curated Bitcoin privacy scenarios are loaded for
+                  repeatable demonstrations.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={onOpenJudgeDemo}
+                className="btn btn-sm"
+                style={{
+                  color: '#ffe7a8',
+                  background: 'rgba(245,184,75,.10)',
+                  borderColor: 'rgba(245,184,75,.25)',
+                }}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Judge Demo
+                <ArrowRight className="w-3 h-3" />
+              </button>
+
+              <button
+                onClick={() => setIsDemoMode(false)}
+                className="btn btn-sm"
+              >
+                Switch to Live
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onOpenJudgeDemo}
-              className="px-3.5 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors flex items-center gap-1.5 shadow-md shadow-amber-950/40"
-            >
-              <span>Judge Quick Demo</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => setIsDemoMode(false)}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 transition-colors"
-            >
-              Switch to Live Node
-            </button>
-          </div>
-        </div>
+        </section>
       )}
 
-      {/* Hero Section */}
-      <section className="relative rounded-2xl bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 p-8 sm:p-12 overflow-hidden shadow-2xl">
-        {/* Decorative Grid and Accents */}
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* =====================================================
+          HERO
+          ===================================================== */}
+      <section className="relative overflow-hidden rounded-2xl border border-slate-800/80 bg-[#0b1017] shadow-[0_20px_70px_rgba(0,0,0,.18)]">
+        {/* Background grid */}
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px)',
+            backgroundSize: '34px 34px',
+          }}
+        />
 
-        <div className="max-w-3xl relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono">
-            <Cpu className="w-3.5 h-3.5 text-cyan-400" />
-            <span>AI-POWERED BITCOIN PRIVACY INTELLIGENCE</span>
-          </div>
+        {/* Glow */}
+        <div className="absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full bg-cyan-400/[0.055] blur-3xl pointer-events-none" />
 
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white font-mono leading-tight">
-              BLOCKSHIELD AI
+        <div className="absolute -bottom-32 -left-32 w-[360px] h-[360px] rounded-full bg-blue-500/[0.04] blur-3xl pointer-events-none" />
+
+        <div className="relative grid lg:grid-cols-[1.25fr_.75fr] gap-10 p-6 sm:p-9 lg:p-11">
+          {/* Hero copy */}
+          <div className="flex flex-col justify-center">
+            <div className="eyebrow">
+              AI-powered Bitcoin privacy intelligence
+            </div>
+
+            <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-[-0.055em] text-white leading-[0.98]">
+              BLOCKSHIELD
+              <span className="text-cyan-400"> AI</span>
             </h1>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 font-sans">
-              YOUR BITCOIN. YOUR PRIVACY.
-            </h2>
-          </div>
 
-          <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-sans">
-            Turn public Bitcoin blockchain data into understandable privacy intelligence.
-            Detect address reuse, analyze linkability risks, inspect payment graphs, and query a tool-calling AI agent grounded in real blockchain heuristics.
-          </p>
-
-          {/* Quick Action Buttons */}
-          <div className="pt-2 flex flex-wrap items-center gap-3.5">
-            <button
-              id="hero-analyze-tx-button"
-              onClick={() => setActiveTab('transaction')}
-              className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-cyan-950/60 cursor-pointer"
-            >
-              <Search className="w-4 h-4" />
-              <span>Analyze Transaction</span>
-            </button>
-
-            <button
-              id="hero-try-demo-button"
-              onClick={onOpenJudgeDemo}
-              className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold text-sm border border-slate-700 flex items-center gap-2 transition-all cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Try Demo Scenarios</span>
-            </button>
-
-            <button
-              id="hero-copilot-button"
-              onClick={() => setActiveTab('copilot')}
-              className="px-5 py-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-semibold text-sm border border-blue-500/30 flex items-center gap-2 transition-all cursor-pointer"
-            >
-              <Bot className="w-4 h-4 text-blue-400" />
-              <span>Open AI Copilot</span>
-            </button>
-          </div>
-
-          {/* Security Notice Mini Banner */}
-          <div className="pt-4 flex items-center gap-2.5 text-xs text-slate-400 font-mono">
-            <Lock className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Zero-Custody Protocol: Never enter your seed phrase or private key.</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 4 Core Intelligence Cards */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-cyan-400" />
-            <h3 className="font-mono text-sm font-bold uppercase tracking-wider text-slate-200">
-              Defensive Intelligence Pillars
-            </h3>
-          </div>
-          <span className="text-xs text-slate-400">Probabilistic on-chain analysis</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1: Privacy Risk */}
-          <div
-            onClick={() => setActiveTab('transaction')}
-            className="group bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 rounded-xl p-5 shadow-lg transition-all cursor-pointer space-y-3"
-          >
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-100 text-sm font-sans">Heuristic Privacy Risk</h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Evaluates transactions on a 0–100 risk scale (Low, Moderate, High, Very High) derived from 5 mathematical factors.
-              </p>
-            </div>
-            <div className="pt-2 flex items-center gap-1 text-xs font-medium text-cyan-400 group-hover:translate-x-0.5 transition-transform">
-              <span>Inspect Scorer</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
-          </div>
-
-          {/* Card 2: Address Reuse */}
-          <div
-            onClick={() => setActiveTab('address')}
-            className="group bg-slate-900/80 border border-slate-800 hover:border-amber-500/40 rounded-xl p-5 shadow-lg transition-all cursor-pointer space-y-3"
-          >
-            <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:bg-amber-500/20 transition-colors">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-100 text-sm font-sans">Address Reuse Detection</h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Flags direct input-output reuse and multiple historical activities that collapse user pseudonymity into a single profile.
-              </p>
-            </div>
-            <div className="pt-2 flex items-center gap-1 text-xs font-medium text-amber-400 group-hover:translate-x-0.5 transition-transform">
-              <span>Inspect Addresses</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
-          </div>
-
-          {/* Card 3: Linkability */}
-          <div
-            onClick={() => setActiveTab('transaction')}
-            className="group bg-slate-900/80 border border-slate-800 hover:border-blue-500/40 rounded-xl p-5 shadow-lg transition-all cursor-pointer space-y-3"
-          >
-            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
-              <Layers className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-100 text-sm font-sans">Linkability & Clustering</h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Identifies Common-Input-Ownership Heuristics (CIOH), round payment amounts, and asymmetrical change outputs.
-              </p>
-            </div>
-            <div className="pt-2 flex items-center gap-1 text-xs font-medium text-blue-400 group-hover:translate-x-0.5 transition-transform">
-              <span>View Payment Flows</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
-          </div>
-
-          {/* Card 4: AI Copilot */}
-          <div
-            onClick={() => setActiveTab('copilot')}
-            className="group bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 rounded-xl p-5 shadow-lg transition-all cursor-pointer space-y-3"
-          >
-            <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 transition-colors">
-              <Bot className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-100 text-sm font-sans">Tool-Calling AI Agent</h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Queries blockchain tools in real time, streams execution telemetry, and generates grounded, defensive explanations.
-              </p>
-            </div>
-            <div className="pt-2 flex items-center gap-1 text-xs font-medium text-purple-400 group-hover:translate-x-0.5 transition-transform">
-              <span>Chat with Agent</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Curated Hackathon Demo Scenarios */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-mono text-sm font-bold uppercase tracking-wider text-slate-200">
-              Interactive Test Scenarios
-            </h3>
-            <p className="text-xs text-slate-400">
-              Select any pre-configured Bitcoin transaction to test privacy heuristics instantly
+            <p className="mt-4 text-base sm:text-lg text-slate-300 font-medium">
+              Your Bitcoin. Your privacy.
             </p>
-          </div>
-          <button
-            onClick={onOpenJudgeDemo}
-            className="text-xs text-amber-400 hover:text-amber-300 font-mono font-medium flex items-center gap-1"
-          >
-            <span>Open Scenario Picker</span>
-            <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {scenarios.map((scenario) => {
-            const isLow = scenario.id === 'low_risk';
-            const isReuse = scenario.id === 'address_reuse';
+            <p className="mt-5 max-w-2xl text-sm sm:text-[15px] leading-7 text-slate-400">
+              Analyze publicly observable Bitcoin activity and turn complex
+              blockchain signals into understandable privacy intelligence.
+            </p>
 
-            return (
-              <div
-                key={scenario.id}
-                className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between space-y-4"
+            {/* Actions */}
+            <div className="mt-7 flex flex-wrap gap-2.5">
+              <button
+                id="hero-analyze-tx-button"
+                onClick={() => setActiveTab('transaction')}
+                className="btn btn-primary btn-lg"
               >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-100 text-sm">{scenario.name}</span>
-                    <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                        isLow
-                          ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                          : isReuse
-                          ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                          : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
-                      }`}
-                    >
-                      Score: {scenario.expectedScoreRange}
-                    </span>
+                <Search className="w-4 h-4" />
+                Analyze Transaction
+              </button>
+
+              <button
+                id="hero-copilot-button"
+                onClick={() => setActiveTab('copilot')}
+                className="btn btn-lg"
+              >
+                <Bot className="w-4 h-4 text-cyan-400" />
+                AI Copilot
+              </button>
+
+              <button
+                id="hero-try-demo-button"
+                onClick={onOpenJudgeDemo}
+                className="btn btn-lg"
+              >
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                Judge Demo
+              </button>
+            </div>
+
+            {/* Security note */}
+            <div className="mt-7 flex items-start gap-2.5 text-[11px] text-slate-500">
+              <Lock className="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-400" />
+              <span>
+                Defensive analysis only. Never enter a seed phrase, private
+                key, password, or other secret.
+              </span>
+            </div>
+          </div>
+
+          {/* Hero intelligence panel */}
+          <div className="flex items-center">
+            <div className="w-full rounded-xl border border-slate-800 bg-[#080d13]/80 p-5 sm:p-6">
+              <div className="flex items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-md bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center">
+                    <Shield className="w-3.5 h-3.5 text-cyan-400" />
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    {scenario.description}
-                  </p>
-
-                  <div className="bg-slate-950 p-2.5 rounded border border-slate-800 text-[11px] font-mono text-slate-400 break-all">
-                    TX: {scenario.txid.slice(0, 16)}...{scenario.txid.slice(-8)}
+                  <div>
+                    <p className="text-[10px] font-bold font-mono tracking-[0.12em] text-slate-500 uppercase">
+                      Intelligence Console
+                    </p>
+                    <p className="text-xs font-semibold text-slate-200">
+                      Privacy Analysis Engine
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
-                  <button
-                    onClick={() => onSelectScenario(scenario, 'transaction')}
-                    className="flex-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors text-center"
-                  >
-                    Inspect TX
-                  </button>
-                  <button
-                    onClick={() => onSelectScenario(scenario, 'copilot')}
-                    className="flex-1 px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs transition-colors text-center flex items-center justify-center gap-1"
-                  >
-                    <Bot className="w-3.5 h-3.5" />
-                    <span>Run AI</span>
-                  </button>
+                <span className="badge badge-live">Operational</span>
+              </div>
+
+              <div className="py-5 space-y-4">
+                {[
+                  {
+                    label: 'Address Reuse',
+                    value: 'Detected',
+                    width: '72%',
+                    cls: 'bg-amber-400',
+                  },
+                  {
+                    label: 'Linkability',
+                    value: 'Analyzing',
+                    width: '84%',
+                    cls: 'bg-cyan-400',
+                  },
+                  {
+                    label: 'Transaction Structure',
+                    value: 'Evaluated',
+                    width: '61%',
+                    cls: 'bg-blue-400',
+                  },
+                  {
+                    label: 'Public Exposure',
+                    value: 'Visible',
+                    width: '48%',
+                    cls: 'bg-emerald-400',
+                  },
+                ].map((item) => (
+                  <div key={item.label}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[11px] text-slate-400">
+                        {item.label}
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-500">
+                        {item.value}
+                      </span>
+                    </div>
+
+                    <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${item.cls}`}
+                        style={{ width: item.width }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 grid grid-cols-3 gap-3">
+                <div>
+                  <p className="text-[9px] uppercase tracking-wider text-slate-600 font-bold">
+                    Network
+                  </p>
+                  <p className="mt-1 text-xs font-mono text-slate-300">
+                    MAINNET
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[9px] uppercase tracking-wider text-slate-600 font-bold">
+                    Engine
+                  </p>
+                  <p className="mt-1 text-xs font-mono text-slate-300">
+                    HEURISTIC
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[9px] uppercase tracking-wider text-slate-600 font-bold">
+                    Scale
+                  </p>
+                  <p className="mt-1 text-xs font-mono text-cyan-300">
+                    0–100
+                  </p>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Cypherpunk Defensive Manifesto Card */}
-      <section className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-1.5 max-w-2xl">
-          <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Cypherpunk Engineering Philosophy</span>
+      {/* =====================================================
+          CORE ANALYSIS TOOLS
+          ===================================================== */}
+      <section>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <Terminal className="w-4 h-4 text-cyan-400" />
+              <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-slate-200">
+                Privacy Intelligence
+              </h2>
+            </div>
+
+            <p className="mt-1 text-xs text-slate-500">
+              Defensive signals derived from observable blockchain activity.
+            </p>
           </div>
-          <p className="text-sm text-slate-300 leading-relaxed">
-            &quot;Privacy is necessary for an open society in the electronic age. Privacy is not secrecy. A private matter is something one doesn&apos;t want the whole world to know, but a secret matter is something one doesn&apos;t want anybody to know.&quot;
-          </p>
-          <span className="text-xs text-slate-400 font-mono block">
-            — Eric Hughes, A Cypherpunk&apos;s Manifesto (1993)
+
+          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-600">
+            Probabilistic analysis
           </span>
         </div>
 
-        <button
-          onClick={() => setActiveTab('guide')}
-          className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-medium whitespace-nowrap flex items-center gap-1.5"
-        >
-          <span>Read Privacy Guide</span>
-          <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
-        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+          {/* Risk */}
+          <button
+            onClick={() => setActiveTab('transaction')}
+            className="group text-left rounded-xl border border-slate-800 bg-[#0c1219] p-5 hover:border-cyan-400/25 hover:bg-[#0e151d] transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-9 h-9 rounded-lg bg-cyan-400/10 border border-cyan-400/15 flex items-center justify-center">
+                <Shield className="w-4 h-4 text-cyan-400" />
+              </div>
+
+              <ArrowRight className="w-4 h-4 text-slate-700 group-hover:text-cyan-400 transition-colors" />
+            </div>
+
+            <h3 className="mt-5 text-sm font-semibold text-slate-100">
+              Privacy Risk
+            </h3>
+
+            <p className="mt-2 text-xs leading-6 text-slate-500">
+              Score transaction privacy from 0–100 using five explainable
+              heuristic factors.
+            </p>
+
+            <div className="mt-4 text-[10px] font-mono uppercase tracking-wider text-cyan-400">
+              Analyze transaction
+            </div>
+          </button>
+
+          {/* Address */}
+          <button
+            onClick={() => setActiveTab('address')}
+            className="group text-left rounded-xl border border-slate-800 bg-[#0c1219] p-5 hover:border-amber-400/25 hover:bg-[#0e151d] transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-9 h-9 rounded-lg bg-amber-400/10 border border-amber-400/15 flex items-center justify-center">
+                <AlertTriangle className="w-4 h-4 text-amber-300" />
+              </div>
+
+              <ArrowRight className="w-4 h-4 text-slate-700 group-hover:text-amber-300 transition-colors" />
+            </div>
+
+            <h3 className="mt-5 text-sm font-semibold text-slate-100">
+              Address Reuse
+            </h3>
+
+            <p className="mt-2 text-xs leading-6 text-slate-500">
+              Identify repeated address activity that may increase
+              pseudonymous linkability.
+            </p>
+
+            <div className="mt-4 text-[10px] font-mono uppercase tracking-wider text-amber-300">
+              Analyze address
+            </div>
+          </button>
+
+          {/* Graph */}
+          <button
+            onClick={() => setActiveTab('transaction')}
+            className="group text-left rounded-xl border border-slate-800 bg-[#0c1219] p-5 hover:border-blue-400/25 hover:bg-[#0e151d] transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-9 h-9 rounded-lg bg-blue-400/10 border border-blue-400/15 flex items-center justify-center">
+                <Network className="w-4 h-4 text-blue-300" />
+              </div>
+
+              <ArrowRight className="w-4 h-4 text-slate-700 group-hover:text-blue-300 transition-colors" />
+            </div>
+
+            <h3 className="mt-5 text-sm font-semibold text-slate-100">
+              Linkability Graph
+            </h3>
+
+            <p className="mt-2 text-xs leading-6 text-slate-500">
+              Inspect transaction structure, inputs, outputs and potential
+              clustering signals.
+            </p>
+
+            <div className="mt-4 text-[10px] font-mono uppercase tracking-wider text-blue-300">
+              Inspect graph
+            </div>
+          </button>
+
+          {/* AI */}
+          <button
+            onClick={() => setActiveTab('copilot')}
+            className="group text-left rounded-xl border border-slate-800 bg-[#0c1219] p-5 hover:border-emerald-400/25 hover:bg-[#0e151d] transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-9 h-9 rounded-lg bg-emerald-400/10 border border-emerald-400/15 flex items-center justify-center">
+                <Bot className="w-4 h-4 text-emerald-300" />
+              </div>
+
+              <ArrowRight className="w-4 h-4 text-slate-700 group-hover:text-emerald-300 transition-colors" />
+            </div>
+
+            <h3 className="mt-5 text-sm font-semibold text-slate-100">
+              AI Privacy Copilot
+            </h3>
+
+            <p className="mt-2 text-xs leading-6 text-slate-500">
+              Ask privacy questions and receive structured explanations
+              grounded in blockchain analysis.
+            </p>
+
+            <div className="mt-4 text-[10px] font-mono uppercase tracking-wider text-emerald-300">
+              Open copilot
+            </div>
+          </button>
+        </div>
+      </section>
+
+      {/* =====================================================
+          QUICK ANALYSIS
+          ===================================================== */}
+      <section className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4">
+        {/* Scenario list */}
+        <div className="rounded-xl border border-slate-800 bg-[#0b1017] overflow-hidden">
+          <div className="flex items-center justify-between gap-4 px-5 py-4 border-b border-slate-800">
+            <div>
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-cyan-400" />
+                <h2 className="text-sm font-semibold text-slate-200">
+                  Quick Analysis Scenarios
+                </h2>
+              </div>
+
+              <p className="mt-1 text-[11px] text-slate-500">
+                Use deterministic examples for demonstrations.
+              </p>
+            </div>
+
+            <button
+              onClick={onOpenJudgeDemo}
+              className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-400 hover:text-cyan-300"
+            >
+              Open demo
+              <ExternalLink className="w-3 h-3" />
+            </button>
+          </div>
+
+          <div className="divide-y divide-slate-800/80">
+            {scenarios.map((scenario, index) => (
+              <div
+                key={scenario.id}
+                className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 hover:bg-white/[0.015] transition-colors"
+              >
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="w-7 h-7 shrink-0 rounded-md bg-slate-900 border border-slate-800 flex items-center justify-center">
+                    <span className="text-[10px] font-mono text-slate-500">
+                      0{index + 1}
+                    </span>
+                  </div>
+
+                  <div className="min-w-0">
+                    <h3 className="text-xs font-semibold text-slate-200">
+                      {scenario.name}
+                    </h3>
+
+                    <p className="mt-1 text-[11px] leading-5 text-slate-500">
+                      {scenario.description}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => onSelectScenario(scenario, 'transaction')}
+                  className="btn btn-sm shrink-0"
+                >
+                  Analyze
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* System status */}
+        <div className="rounded-xl border border-slate-800 bg-[#0b1017] p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-emerald-400" />
+              <h2 className="text-sm font-semibold text-slate-200">
+                System Status
+              </h2>
+            </div>
+
+            <span className="badge badge-live">Online</span>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {[
+              ['Bitcoin Mainnet', 'Operational'],
+              ['Privacy Engine', 'Operational'],
+              ['Transaction Graph', 'Ready'],
+              ['AI Copilot', 'Available'],
+            ].map(([label, status]) => (
+              <div
+                key={label}
+                className="flex items-center justify-between py-2.5 border-b border-slate-800/70 last:border-0"
+              >
+                <span className="text-xs text-slate-400">{label}</span>
+
+                <span className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  {status}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 pt-4 border-t border-slate-800">
+            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-slate-600">
+              <Eye className="w-3 h-3" />
+              Public blockchain data only
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================
+          METHODOLOGY STRIP
+          ===================================================== */}
+      <section className="rounded-xl border border-slate-800 bg-[#0b1017] p-5 sm:p-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
+          <div className="md:col-span-2">
+            <div className="eyebrow">How the score works</div>
+
+            <h2 className="mt-3 text-lg font-semibold text-slate-100">
+              Explainable privacy heuristics
+            </h2>
+
+            <p className="mt-2 text-xs leading-6 text-slate-500">
+              BlockShield combines multiple observable signals instead of
+              making identity claims about Bitcoin users.
+            </p>
+          </div>
+
+          {[
+            ['30%', 'Address Reuse'],
+            ['25%', 'Linkability'],
+            ['20%', 'Transaction Structure'],
+          ].map(([weight, label]) => (
+            <div
+              key={label}
+              className="rounded-lg border border-slate-800 bg-slate-950/40 p-4"
+            >
+              <p className="text-xl font-bold tracking-tight text-cyan-400">
+                {weight}
+              </p>
+              <p className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">
+                {label}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );
