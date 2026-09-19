@@ -1,0 +1,6 @@
+{
+  "name": "BlockShield AI",
+  "description": "AI-powered privacy intelligence for Bitcoin. Turn public Bitcoin blockchain data into understandable privacy intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
